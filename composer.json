@@ -1,0 +1,24 @@
+{
+  "name": "codeup/phalcon-psr",
+  "type": "library",
+  "description": "PSR adapter library for Phalcon 3",
+  "homepage": "https://github.com/codeup-berlin/phalcon-psr",
+  "version": "1.0.0",
+  "license": "BSD-3-Clause",
+  "autoload": {
+    "psr-4": {
+      "Codeup\\PhalconPsr\\": "src"
+    }
+  },
+  "require": {
+    "ext-phalcon": "^3.0",
+    "psr/http-message": "^1.0",
+    "guzzlehttp/psr7": "^1.3",
+    "container-interop/container-interop": "^1.1",
+    "codeup/interop-mvc": "^1.0"
+  },
+  "require-dev": {
+    "phalcon/devtools": "^3.0",
+    "phpunit/phpunit": "^5.7"
+  }
+}

@@ -1,2 +1,1 @@
-# phalcon-psr
-PSR adapter library for phalcon
+# PSR adapter library for Phalcon 3
