@@ -3,7 +3,6 @@
   "type": "library",
   "description": "PSR adapter library for Phalcon 3",
   "homepage": "https://github.com/codeup-berlin/phalcon-psr",
-  "version": "1.0.0",
   "license": "BSD-3-Clause",
   "autoload": {
     "psr-4": {
