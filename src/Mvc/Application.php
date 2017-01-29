@@ -84,7 +84,20 @@ class Application extends \Phalcon\Mvc\Application
             $view->start();
         }
 
-        $dispatcher->dispatch();
+        if (!$di->has('response')) {
+            $di->set(
+                'response',
+                function () {
+                    return new \Phalcon\Http\Response();
+                }
+            );
+        }
+        try {
+            $dispatcher->dispatch();
+        } catch (\Phalcon\Mvc\Dispatcher\Exception $e) {
+            header("HTTP/1.0 404 Not Found");
+            return false;
+        }
 
         if ($view) {
             $view->render(
