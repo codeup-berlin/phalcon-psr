@@ -1,6 +1,11 @@
 {
   "name": "codeup/phalcon-psr",
   "type": "library",
+  "extra": {
+    "branch-alias": {
+      "dev-trunk": "1.1.x-dev"
+    }
+  },
   "description": "PSR adapter library for Phalcon 3",
   "homepage": "https://github.com/codeup-berlin/phalcon-psr",
   "license": "BSD-3-Clause",

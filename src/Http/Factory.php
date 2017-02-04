@@ -11,6 +11,8 @@ class Factory
     public function factorServerRequest(\Phalcon\Http\Request $phalconRequest, $psrImplementation = 'guzzle')
     {
         switch ($psrImplementation) {
+            case 'phalconReadAdapter':
+                return new Message\ServerRequestReadAdapter($phalconRequest);
             case 'guzzle':
                 $httpMethod = $phalconRequest->getMethod();
                 $result = new \GuzzleHttp\Psr7\ServerRequest(
