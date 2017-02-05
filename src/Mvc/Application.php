@@ -19,6 +19,11 @@ class Application extends \Phalcon\Mvc\Application
     protected $serviceContainer = null;
 
     /**
+     * @var null|\Psr\Http\Middleware\StackInterface
+     */
+    private $middlewareStack = null;
+
+    /**
      * Application constructor.
      *
      * @param \Codeup\PhalconPsr\Http\Factory $psrFactory
@@ -59,10 +64,12 @@ class Application extends \Phalcon\Mvc\Application
             $view = null;
         }
 
-        /** @var \Phalcon\Mvc\DispatcherInterface $dispatcher */
+        /** @var \Codeup\PhalconPsr\Mvc\Dispatcher $dispatcher */
+        // \Codeup\PhalconPsr\Mvc\Dispatcher is required to instantiate the middleware handler adapter
+        // inbetween the actual application controller
         $dispatcher = $di->get('dispatcher');
-        if (!($dispatcher instanceof \Phalcon\Mvc\DispatcherInterface)) {
-            throw new \InvalidArgumentException('Phalcon Mvc Dispatcher expected.');
+        if (!($dispatcher instanceof \Codeup\PhalconPsr\Mvc\Dispatcher)) {
+            throw new \InvalidArgumentException('\Codeup\PhalconPsr\Mvc\Dispatcher expected.');
         }
         $dispatcher->setControllerName($router->getControllerName());
         $dispatcher->setActionName($router->getActionName());
@@ -85,7 +92,8 @@ class Application extends \Phalcon\Mvc\Application
         $dispatcher->setParams([
             $psrServerRequest,
             $requestedResponse,
-            $this->serviceContainer
+            $this->serviceContainer,
+            $this->middlewareStack
         ]);
 
         if ($view) {
@@ -139,5 +147,14 @@ class Application extends \Phalcon\Mvc\Application
         }
 
         echo $response->getBody();
+    }
+
+    /**
+     * @param \Psr\Http\Middleware\StackInterface $middlewareStack
+     * @return void
+     */
+    public function setMiddlewareStack(\Psr\Http\Middleware\StackInterface $middlewareStack)
+    {
+        $this->middlewareStack = $middlewareStack;
     }
 }

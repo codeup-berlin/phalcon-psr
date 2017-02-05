@@ -1,7 +1,7 @@
 <?php
 namespace Codeup\PhalconPsr\Mvc\Middleware\Controller;
 
-class HandlerAdapter extends \Codeup\InteropMvc\Controller\ServiceContainer
+class HandlerAdapter
 {
     /**
      * @var string
@@ -25,7 +25,7 @@ class HandlerAdapter extends \Codeup\InteropMvc\Controller\ServiceContainer
      */
     public function __call($actionName, $arguments)
     {
-        list($request, $response, $serviceContainer) = $arguments;
+        list($request, $response, $serviceContainer, $middlewareStack) = $arguments;
 
         if (!($request instanceof \Psr\Http\Message\RequestInterface)) {
             throw new \InvalidArgumentException('PSR-7 request expected: ' . get_class($request));
@@ -36,6 +36,9 @@ class HandlerAdapter extends \Codeup\InteropMvc\Controller\ServiceContainer
         if (!($serviceContainer instanceof \Interop\Container\ContainerInterface)) {
             throw new \InvalidArgumentException('Interop service container expected: ' . get_class($serviceContainer));
         }
+        if ($middlewareStack !== null && !($middlewareStack instanceof \Psr\Http\Middleware\StackInterface)) {
+            throw new \InvalidArgumentException('PSR-15 middleware stack expected: ' . get_class($middlewareStack));
+        }
 
         if (!method_exists($this->applicationController, $actionName)) {
             throw new \Phalcon\Mvc\Dispatcher\Exception(
@@ -44,6 +47,10 @@ class HandlerAdapter extends \Codeup\InteropMvc\Controller\ServiceContainer
             );
         }
 
-        return $this->applicationController->$actionName($request, $response, $serviceContainer);
+        if ($middlewareStack) {
+            throw new \Exception('Not implemented yet');
+        } else {
+            return $this->applicationController->$actionName($request, $response, $serviceContainer);
+        }
     }
 }

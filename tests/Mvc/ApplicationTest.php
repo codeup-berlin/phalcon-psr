@@ -37,7 +37,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $viewMock = $this->createMock(\Phalcon\Mvc\ViewInterface::class);
         $viewMock->method('getContent')->willReturn($expectedViewContent);
 
-        $dispatcherMock = $this->createMock(\Phalcon\Mvc\DispatcherInterface::class);
+        $dispatcherMock = $this->createMock(\Codeup\PhalconPsr\Mvc\Dispatcher::class);
         $dispatcherMock->method('getReturnedValue')->willReturn($psrResponseStub);
         $dispatcherMock->method('getParams')->willReturn($expectedParams);
         $dispatcherMock->method('getControllerName')->willReturn($expectedController);
