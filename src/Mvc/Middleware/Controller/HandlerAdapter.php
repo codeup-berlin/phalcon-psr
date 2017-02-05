@@ -11,7 +11,7 @@ class HandlerAdapter extends \Codeup\InteropMvc\Controller\ServiceContainer
     private $applicationController;
 
     /**
-     * @param class $applicationController
+     * @param object $applicationController
      */
     public function __construct($applicationController)
     {
