@@ -23,20 +23,34 @@ trait Dispatcher
     public function getHandlerClass()
     {
         /** @var \Phalcon\Dispatcher $this */
-        $phalconHandlerClass = parent::getHandlerClass();
+        $appControllerClass = parent::getHandlerClass();
         if ($this->wasForwarded()) {
-            return $phalconHandlerClass;
+            return $appControllerClass;
         } else {
+            $appController = $this->getAppController($appControllerClass);
             $handlerClass = \Codeup\PhalconPsr\Mvc\Middleware\Controller\HandlerAdapter::class;
             /** @var \Phalcon\DiInterface $di */
             $di = $this->_dependencyInjector;
             $di->setShared(
                 $handlerClass,
-                new \Codeup\PhalconPsr\Mvc\Middleware\Controller\HandlerAdapter(
-                    $phalconHandlerClass
-                )
+                new \Codeup\PhalconPsr\Mvc\Middleware\Controller\HandlerAdapter($appController)
             );
             return $handlerClass;
         }
+    }
+
+    /**
+     * @param string $className
+     * @throws \Phalcon\Mvc\Dispatcher\Exception
+     */
+    private function getAppController(string $className)
+    {
+        if (!$this->_dependencyInjector->has($className) && !class_exists($className)) {
+            throw new \Phalcon\Mvc\Dispatcher\Exception(
+                $className . " handler class cannot be loaded",
+                \Phalcon\Dispatcher::EXCEPTION_HANDLER_NOT_FOUND
+            );
+        }
+        return $this->_dependencyInjector->getShared($className);
     }
 }

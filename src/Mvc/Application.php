@@ -61,12 +61,11 @@ class Application extends \Phalcon\Mvc\Application
 
         /** @var \Phalcon\Mvc\DispatcherInterface $dispatcher */
         $dispatcher = $di->get('dispatcher');
-        $dispatcher->setControllerName(
-            $router->getControllerName()
-        );
-        $dispatcher->setActionName(
-            $router->getActionName()
-        );
+        if (!($dispatcher instanceof \Phalcon\Mvc\DispatcherInterface)) {
+            throw new \InvalidArgumentException('Phalcon Mvc Dispatcher expected.');
+        }
+        $dispatcher->setControllerName($router->getControllerName());
+        $dispatcher->setActionName($router->getActionName());
 
         // apply phalcon router params as PSR request attributes
         $psrServerRequest = $this->psrFactory->factorServerRequest($this->phalconRequest);
