@@ -74,23 +74,23 @@ class Application extends \Phalcon\Mvc\Application
             $psrServerRequest = $psrServerRequest->withAttribute($k, $v);
         }
 
+        if ($di->has('response')) {
+            $requestedResponse = $di->get('response');
+            if (!($requestedResponse instanceof \Psr\Http\Message\ResponseInterface)) {
+                throw new \InvalidArgumentException('PSR-7 response expected.');
+            }
+        } else {
+            $requestedResponse = $this->psrFactory->factorResponse();
+            $di->set('response', $requestedResponse);
+        }
         $dispatcher->setParams([
             $psrServerRequest,
-            $this->psrFactory->factorResponse(),
+            $requestedResponse,
             $this->serviceContainer
         ]);
 
         if ($view) {
             $view->start();
-        }
-
-        if (!$di->has('response')) {
-            $di->set(
-                'response',
-                function () {
-                    return new \Phalcon\Http\Response();
-                }
-            );
         }
         try {
             $dispatcher->dispatch();
@@ -108,18 +108,18 @@ class Application extends \Phalcon\Mvc\Application
             $view->finish();
         }
 
-        $response = $dispatcher->getReturnedValue();
-        if (!($response instanceof \Psr\Http\Message\ResponseInterface)) {
+        $resultedResponse = $dispatcher->getReturnedValue();
+        if (!($resultedResponse instanceof \Psr\Http\Message\ResponseInterface)) {
             throw new \UnexpectedValueException('PSR-7 response expected.');
         }
 
         if ($view) {
-            $response->getBody()->write(
+            $resultedResponse->getBody()->write(
                 $view->getContent()
             );
         }
 
-        $this->sendResponse($response);
+        $this->sendResponse($resultedResponse);
 
         return true;
     }
