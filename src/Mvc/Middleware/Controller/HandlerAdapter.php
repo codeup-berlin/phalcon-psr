@@ -55,8 +55,13 @@ class HandlerAdapter implements \Psr\Http\Middleware\DelegateInterface
         if (!($serviceContainer instanceof \Interop\Container\ContainerInterface)) {
             throw new \InvalidArgumentException('Interop service container expected: ' . get_class($serviceContainer));
         }
-        if ($middlewareStack !== null && !($middlewareStack instanceof \Codeup\InteropMvc\Middleware\RespondingArrayServerStack)) {
-            throw new \InvalidArgumentException('PSR-15 middleware stack expected: ' . get_class($middlewareStack));
+        if ($middlewareStack) {
+            if (!($middlewareStack instanceof \Psr\Http\Middleware\StackInterface)) {
+                throw new \InvalidArgumentException('\Psr\Http\Middleware\StackInterface expected: ' . get_class($middlewareStack));
+            }
+            if (!($middlewareStack instanceof \Codeup\InteropMvc\Middleware\Stack\ResponseAware)) {
+                throw new \InvalidArgumentException('\Codeup\InteropMvc\Middleware\Stack\ResponseAware expected: ' . get_class($middlewareStack));
+            }
         }
 
         if (!method_exists($this->applicationController, $actionName)) {
