@@ -1,12 +1,31 @@
 <?php
 namespace Codeup\PhalconPsr\Mvc\Middleware\Controller;
 
-class HandlerAdapter
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+
+class HandlerAdapter implements \Psr\Http\Middleware\DelegateInterface
 {
     /**
      * @var string
      */
     private $applicationController;
+
+    /**
+     * @var string
+     */
+    private $actionName = '';
+
+    /**
+     * @var \Psr\Http\Message\ResponseInterface
+     */
+    private $response;
+
+    /**
+     * @var \Interop\Container\ContainerInterface
+     */
+    private $serviceContainer;
 
     /**
      * @param object $applicationController
@@ -27,7 +46,7 @@ class HandlerAdapter
     {
         list($request, $response, $serviceContainer, $middlewareStack) = $arguments;
 
-        if (!($request instanceof \Psr\Http\Message\RequestInterface)) {
+        if (!($request instanceof \Psr\Http\Message\ServerRequestInterface)) {
             throw new \InvalidArgumentException('PSR-7 request expected: ' . get_class($request));
         }
         if (!($response instanceof \Psr\Http\Message\ResponseInterface)) {
@@ -36,7 +55,7 @@ class HandlerAdapter
         if (!($serviceContainer instanceof \Interop\Container\ContainerInterface)) {
             throw new \InvalidArgumentException('Interop service container expected: ' . get_class($serviceContainer));
         }
-        if ($middlewareStack !== null && !($middlewareStack instanceof \Psr\Http\Middleware\StackInterface)) {
+        if ($middlewareStack !== null && !($middlewareStack instanceof \Codeup\InteropMvc\Middleware\RespondingArrayServerStack)) {
             throw new \InvalidArgumentException('PSR-15 middleware stack expected: ' . get_class($middlewareStack));
         }
 
@@ -48,9 +67,28 @@ class HandlerAdapter
         }
 
         if ($middlewareStack) {
-            throw new \Exception('Not implemented yet');
+            $this->actionName = $actionName;
+            $this->response = $response;
+            $this->serviceContainer = $serviceContainer;
+            $middlewareStack->setResponseSourceDelegate($this);
+            return $middlewareStack->process($request);
         } else {
             return $this->applicationController->$actionName($request, $response, $serviceContainer);
         }
+    }
+
+    /**
+     * Dispatch the next available middleware and return the response.
+     *
+     * @param RequestInterface $request
+     * @return ResponseInterface
+     */
+    public function next(RequestInterface $request)
+    {
+        if (!($request instanceof ServerRequestInterface)) {
+            throw new \InvalidArgumentException('ServerRequest expected.');
+        }
+        $actionName = $this->actionName;
+        return $this->applicationController->$actionName($request, $this->response, $this->serviceContainer);
     }
 }
