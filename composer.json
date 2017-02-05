@@ -19,7 +19,7 @@
     "psr/http-message": "^1.0",
     "guzzlehttp/psr7": "^1.3",
     "container-interop/container-interop": "^1.1",
-    "codeup/interop-mvc": "^1.0"
+    "codeup/interop-mvc": "^1.2"
   },
   "require-dev": {
     "phalcon/devtools": "^3.0",
