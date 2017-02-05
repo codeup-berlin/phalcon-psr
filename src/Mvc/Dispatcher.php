@@ -9,7 +9,7 @@ class Dispatcher extends \Phalcon\Mvc\Dispatcher
      * @param string $message
      * @param int $exceptionCode
      * @return bool
-     * @throws \Exception
+     * @throws \Phalcon\Mvc\Dispatcher\Exception
      */
     protected function _throwDispatchException($message, $exceptionCode = 0)
     {
