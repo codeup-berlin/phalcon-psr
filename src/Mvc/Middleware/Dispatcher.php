@@ -27,12 +27,12 @@ trait Dispatcher
         if ($this->wasForwarded()) {
             return $phalconHandlerClass;
         } else {
-            $handlerClass = \Codeup\PhalconPsr\Mvc\Middlewar\Controller\HandlerAdapter::class;
+            $handlerClass = \Codeup\PhalconPsr\Mvc\Middleware\Controller\HandlerAdapter::class;
             /** @var \Phalcon\DiInterface $di */
             $di = $this->_dependencyInjector;
             $di->setShared(
                 $handlerClass,
-                new \Codeup\PhalconPsr\Mvc\Middlewar\Controller\HandlerAdapter(
+                new \Codeup\PhalconPsr\Mvc\Middleware\Controller\HandlerAdapter(
                     $phalconHandlerClass
                 )
             );

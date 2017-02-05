@@ -1,5 +1,5 @@
 <?php
-namespace Codeup\PhalconPsr\Mvc\Middlewar\Controller;
+namespace Codeup\PhalconPsr\Mvc\Middleware\Controller;
 
 class HandlerAdapter
 {
