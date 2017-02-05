@@ -3,6 +3,8 @@ namespace Codeup\PhalconPsr\Mvc;
 
 class Dispatcher extends \Phalcon\Mvc\Dispatcher
 {
+    use Middleware\Dispatcher;
+
     /**
      * Throws an internal exception
      *
