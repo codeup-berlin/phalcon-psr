@@ -1,8 +1,6 @@
 <?php
 namespace Codeup\PhalconPsr\Mvc\Middleware\Controller;
 
-use Interop\Container\ContainerInterface;
-
 class HandlerAdapter extends \Codeup\InteropMvc\Controller\ServiceContainer
 {
     /**
