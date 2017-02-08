@@ -56,10 +56,15 @@ class Application extends \Phalcon\Mvc\Application
         /** @var \Phalcon\Mvc\RouterInterface $router */
         $router = $di->get('router');
         $router->handle($uri);
+        $routerNamespaceName = $router->getNamespaceName();
 
         if ($this->_implicitView) {
             /** @var \Phalcon\Mvc\ViewInterface $view */
             $view = $di->get('view');
+            if ($routerNamespaceName) {
+                $viewsDir = $view->getViewsDir();
+                $view->setViewsDir($viewsDir . $routerNamespaceName . '/');
+            }
         } else {
             $view = null;
         }
@@ -73,6 +78,10 @@ class Application extends \Phalcon\Mvc\Application
         }
         $dispatcher->setControllerName($router->getControllerName());
         $dispatcher->setActionName($router->getActionName());
+        if ($routerNamespaceName) {
+            $dispatcherNameSpaceName = $dispatcher->getDefaultNamespace() . '\\' . ucfirst($routerNamespaceName);
+            $dispatcher->setNamespaceName($dispatcherNameSpaceName);
+        }
 
         // apply phalcon router params as PSR request attributes
         $psrServerRequest = $this->psrFactory->factorServerRequest($this->phalconRequest);
