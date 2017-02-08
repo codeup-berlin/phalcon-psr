@@ -183,7 +183,7 @@ class StringReadAdapter implements \Psr\Http\Message\StreamInterface
      */
     public function getContents()
     {
-        throw new \BadMethodCallException('Method is not supported for streamless read adapter implementation.');
+        return $this->content;
     }
 
     /**
