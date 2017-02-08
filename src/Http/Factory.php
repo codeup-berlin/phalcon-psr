@@ -8,7 +8,7 @@ class Factory
      * @param string $psrImplementation
      * @return \Psr\Http\Message\ServerRequestInterface
      */
-    public function factorServerRequest(\Phalcon\Http\Request $phalconRequest, $psrImplementation = 'guzzle')
+    public function factorServerRequest(\Phalcon\Http\Request $phalconRequest, $psrImplementation = 'phalconReadAdapter')
     {
         switch ($psrImplementation) {
             case 'phalconReadAdapter':
