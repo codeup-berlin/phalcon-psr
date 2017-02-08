@@ -103,6 +103,7 @@ class Application extends \Phalcon\Mvc\Application
             $dispatcher->dispatch();
         } catch (\Phalcon\Mvc\Dispatcher\Exception $e) {
             header("HTTP/1.0 404 Not Found");
+            trigger_error($e->getMessage(), E_USER_WARNING);
             return false;
         }
 
