@@ -46,15 +46,25 @@ class ServerRequestReadAdapterTest extends \PHPUnit_Framework_TestCase
 
         $_SERVER['REQUEST_URI'] = $this->expecetdRequestUri;
         $_SERVER['REQUEST_METHOD'] = $this->expectedRequestMethod;
+        $_SERVER['SERVER_PROTOCOL'] = 'HTTP/2.0';
         $_SERVER['HTTP_X_SOME_KNOWN_HEADER'] = implode(', ', $this->expectedRequestHeaders['X-Some-Known-Header']);
         $_SERVER['HTTP_X_SOME_KNOWN_MULTI_VALUE_HEADER'] = implode(', ', $this->expectedRequestHeaders['X-Some-Known-Multi-Value-Header']);
 
         $this->phalconRequestMock = $this->createMock(\Phalcon\Http\Request::class);
         $this->phalconRequestMock->method('getHeaders')->willReturn($this->expectedRequestHeaders);
+        $this->phalconRequestMock->method('getScheme')->willReturn('https');
 
         /** @var \Phalcon\Http\Request $phalconRequestMock */
         $phalconRequestMock = $this->phalconRequestMock;
         $this->classUnderTest = new ServerRequestReadAdapter($phalconRequestMock);
+    }
+
+    /**
+     * @test
+     */
+    public function getProtocolVersion()
+    {
+        $this->assertSame('2.0', $this->classUnderTest->getProtocolVersion());
     }
 
     /**
@@ -177,5 +187,20 @@ class ServerRequestReadAdapterTest extends \PHPUnit_Framework_TestCase
             $_SERVER['HTTP_X_SOME_KNOWN_MULTI_VALUE_HEADER'],
             $this->classUnderTest->getHeaderLine('X-Some-Known-Multi-Value-Header')
         );
+    }
+
+    /**
+     * @test
+     */
+    public function jsonSerialize()
+    {
+        // test
+        $result = json_encode($this->classUnderTest);
+
+        // verify
+        $requestArray = json_decode($result);
+        $this->assertSame('2.0', $requestArray->httpProtocol);
+        $this->assertSame('GET', $requestArray->method);
+        $this->assertSame('https://' . $this->expecetdRequestUri, $requestArray->url);
     }
 }

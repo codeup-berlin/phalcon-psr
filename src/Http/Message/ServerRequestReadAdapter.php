@@ -4,7 +4,7 @@ namespace Codeup\PhalconPsr\Http\Message;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 
-class ServerRequestReadAdapter implements \Psr\Http\Message\ServerRequestInterface
+class ServerRequestReadAdapter implements \Psr\Http\Message\ServerRequestInterface, \JsonSerializable
 {
     /**
      * @var \Phalcon\Http\Request
@@ -42,7 +42,7 @@ class ServerRequestReadAdapter implements \Psr\Http\Message\ServerRequestInterfa
      */
     public function getProtocolVersion()
     {
-        return '1.1';
+        return explode('/', $_SERVER['SERVER_PROTOCOL'])[1];
     }
 
     /**
@@ -566,5 +566,26 @@ class ServerRequestReadAdapter implements \Psr\Http\Message\ServerRequestInterfa
     {
         unset($this->attributes[$name]);
         return $this;
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     *
+     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    function jsonSerialize()
+    {
+        return [
+            'httpProtocol' => $this->getProtocolVersion(),
+            'method' => $this->phalconRequest->getMethod(),
+            'headers' => $this->phalconRequest->getHeaders(),
+            'cookies' => $this->getCookieParams(),
+            'url' => $this->phalconRequest->getScheme() . '://' . $this->phalconRequest->getURI(),
+            'query' => $this->phalconRequest->getQuery(),
+            'body' => $this->phalconRequest->getRawBody(),
+        ];
     }
 }
