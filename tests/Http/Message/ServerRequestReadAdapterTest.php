@@ -33,7 +33,6 @@ class ServerRequestReadAdapterTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->expecetdRequestUri = uniqid('/some/uri/');
         $this->expectedRequestHeaders = [
             'X-Some-Known-Header' => [
                 uniqid('someHeaderValue'),
@@ -44,12 +43,15 @@ class ServerRequestReadAdapterTest extends \PHPUnit_Framework_TestCase
             ],
         ];
 
-        $_SERVER['REQUEST_URI'] = $this->expecetdRequestUri;
+        $_SERVER['QUERY_STRING'] = 'bla=21';
+        $_SERVER['REQUEST_URI'] = uniqid('/some/uri/') . '?' . $_SERVER['QUERY_STRING'];
         $_SERVER['REQUEST_METHOD'] = $this->expectedRequestMethod;
         $_SERVER['SERVER_PROTOCOL'] = 'HTTP/2.0';
         $_SERVER['SERVER_NAME'] = 'www.example.com';
         $_SERVER['HTTP_X_SOME_KNOWN_HEADER'] = implode(', ', $this->expectedRequestHeaders['X-Some-Known-Header']);
         $_SERVER['HTTP_X_SOME_KNOWN_MULTI_VALUE_HEADER'] = implode(', ', $this->expectedRequestHeaders['X-Some-Known-Multi-Value-Header']);
+
+        $this->expecetdRequestUri = $_SERVER['REQUEST_URI'];
 
         $this->phalconRequestMock = $this->createMock(\Phalcon\Http\Request::class);
         $this->phalconRequestMock->method('getHeaders')->willReturn($this->expectedRequestHeaders);
@@ -203,7 +205,5 @@ class ServerRequestReadAdapterTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('2.0', $requestArray->httpProtocol);
         $this->assertSame('GET', $requestArray->method);
         $this->assertSame('https://www.example.com' . $this->expecetdRequestUri, $requestArray->url);
-
-        var_dump($requestArray);
     }
 }
