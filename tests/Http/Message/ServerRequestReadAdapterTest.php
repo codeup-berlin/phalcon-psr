@@ -47,6 +47,7 @@ class ServerRequestReadAdapterTest extends \PHPUnit_Framework_TestCase
         $_SERVER['REQUEST_URI'] = $this->expecetdRequestUri;
         $_SERVER['REQUEST_METHOD'] = $this->expectedRequestMethod;
         $_SERVER['SERVER_PROTOCOL'] = 'HTTP/2.0';
+        $_SERVER['SERVER_NAME'] = 'www.example.com';
         $_SERVER['HTTP_X_SOME_KNOWN_HEADER'] = implode(', ', $this->expectedRequestHeaders['X-Some-Known-Header']);
         $_SERVER['HTTP_X_SOME_KNOWN_MULTI_VALUE_HEADER'] = implode(', ', $this->expectedRequestHeaders['X-Some-Known-Multi-Value-Header']);
 
@@ -201,6 +202,8 @@ class ServerRequestReadAdapterTest extends \PHPUnit_Framework_TestCase
         $requestArray = json_decode($result);
         $this->assertSame('2.0', $requestArray->httpProtocol);
         $this->assertSame('GET', $requestArray->method);
-        $this->assertSame('https://' . $this->expecetdRequestUri, $requestArray->url);
+        $this->assertSame('https://www.example.com' . $this->expecetdRequestUri, $requestArray->url);
+
+        var_dump($requestArray);
     }
 }

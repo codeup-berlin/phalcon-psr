@@ -583,7 +583,7 @@ class ServerRequestReadAdapter implements \Psr\Http\Message\ServerRequestInterfa
             'method' => $this->phalconRequest->getMethod(),
             'headers' => $this->phalconRequest->getHeaders(),
             'cookies' => $this->getCookieParams(),
-            'url' => $this->phalconRequest->getScheme() . '://' . $this->phalconRequest->getURI(),
+            'url' => (string) $this->getUri(),
             'query' => $this->phalconRequest->getQuery(),
             'body' => $this->phalconRequest->getRawBody(),
         ];
