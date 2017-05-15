@@ -12,7 +12,8 @@ class Factory
     {
         switch ($psrImplementation) {
             case 'phalconReadAdapter':
-                return new Message\ServerRequestReadAdapter($phalconRequest);
+                $result = new Message\ServerRequestReadAdapter($phalconRequest);
+                break;
             case 'guzzle':
                 $httpMethod = $phalconRequest->getMethod();
                 $result = new \GuzzleHttp\Psr7\ServerRequest(
@@ -32,6 +33,7 @@ class Factory
             default:
                 throw new \DomainException('Unknown PSR implementation: ' . $psrImplementation);
         }
+        $result->withAttribute('ipAddress', $phalconRequest->getClientAddress(true));
         return $result;
     }
 
